@@ -7,14 +7,28 @@
   <script src="lessons.data.nts.js"></script>
   <script src="dom.nts.js"></script>
   <script>
+    /**@param {{kanji,hiragana,nom,meaning}[]} oneLesson
+     * @return {any[][]}*/
+    function convertOneLessonToMatrix(oneLesson) {
+      const arrayOfArrays = [];
+      for (const {kanji,hiragana,nom,meaning} of oneLesson) {
+        arrayOfArrays.push([kanji,hiragana,nom,meaning]);
+      }
+      return arrayOfArrays;
+    }
+  </script>
+  <script>
     window.onload = () => {
+      //Select.
       const selectElement = createSelectElement(Object.keys(LESSONS), 'elmId_categorySelect',
         newSelectedValue => {
           console.log("selected:"+newSelectedValue);
+          const lessonMaxtrix = convertOneLessonToMatrix(LESSONS[newSelectedValue]);
+          updateTableElement(tableELement, lessonMaxtrix);
         });
       appendChildToById('#elmId_divSelectContainer', selectElement);
-
-      const tableELement = createTableElement(['a','b','c'], [[1,2,3],[4,5,6],[7,8,9]], null, {
+      //Table.
+      const tableELement = createTableElement(['kanji','hiragana','nom','meaning'], [], null, {
         tableClassName: 'tg',
         tableHeaderCellClassName: 'tg-0lax',
         tableBodyCellClassName: 'tg-0lax',

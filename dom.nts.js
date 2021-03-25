@@ -82,11 +82,11 @@ function _ngFor(list, mapperFun) {
  * @param {any[][]} dataMatrix
  * @param {string|null} [id]
  * @param {{
- *  tableClassName:string,
- *  tableHeaderClassName:string,
- *  tableHeaderCellClassName:string,
- *  tableBodyRowClassName:string,
- *  tableBodyCellClassName:string,
+ *  tableClassName?:string,
+ *  tableHeaderClassName?:string,
+ *  tableHeaderCellClassName?:string,
+ *  tableBodyRowClassName?:string,
+ *  tableBodyCellClassName?:string,
  * }} [option]
  * @return HTMLTableElement*/
 const createTableElement = function(headerNameList, dataMatrix, id, option) {
@@ -126,10 +126,10 @@ const _createTableBodyStr = function(dataMatrix, option) {
  * @param {any[][]} dataMatrix
  * @return HTMLTableElement*/
 const updateTableElement = function(tableElement, dataMatrix) {
-  tableElement.innerHTML = `
-    ${_createTableHeaderStr(headerNameList, option)}
-    ${_createTableBodyStr(dataMatrix, option)}
-  `;
+  const tbody = tableElement.querySelector('tbody');
+  if (tbody) {
+    tbody.outerHTML = _createTableBodyStr(dataMatrix);
+  }
   return tableElement;
 };
 
