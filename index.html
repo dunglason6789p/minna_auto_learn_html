@@ -4,33 +4,29 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <link type="text/css" rel="stylesheet" href="style.css"/>
-  <script src="select.nts.js"></script>
+  <script src="lessons.data.nts.js"></script>
+  <script src="dom.nts.js"></script>
   <script>
-    window.onload = ()=>{
-      const selectElement
-        = createSelectElement('elmId_categorySelect', ['a','b','c'], newSelectedValue=>{console.log("selected:"+newSelectedValue)})
-      document.querySelector('#elmId_divSelectContainer').appendChild(selectElement);
+    window.onload = () => {
+      const selectElement = createSelectElement(Object.keys(LESSONS), 'elmId_categorySelect',
+        newSelectedValue => {
+          console.log("selected:"+newSelectedValue);
+        });
+      appendChildToById('#elmId_divSelectContainer', selectElement);
+
+      const tableELement = createTableElement(['a','b','c'], [[1,2,3],[4,5,6],[7,8,9]], null, {
+        tableClassName: 'tg',
+        tableHeaderCellClassName: 'tg-0lax',
+        tableBodyCellClassName: 'tg-0lax',
+      });
+      appendChildToById('#elmId_divTableContainer', tableELement);
     };
   </script>
 </head>
 <body>
 <div id="elmId_mainDiv" style="margin-left: 600px">
   <div id="elmId_divSelectContainer"></div>
-  <div style="max-height: 800px; overflow-y: auto">
-    <table class="tg">
-    <thead>
-      <tr>
-        <th class="tg-0lax">Kanji</th>
-        <th class="tg-0lax">Hira</th>
-        <th class="tg-0lax">Viet</th>
-        <th class="tg-0lax">Romaji</th>
-        <th class="tg-0lax">RomajiKan</th>
-        <th class="tg-0lax">English meaning</th>
-      </tr>
-    </thead>
-    <tbody id="elmId_tableBody"></tbody>
-    </table>
-  </div>
+  <div id="elmId_divTableContainer" style="max-height: 800px; overflow-y: auto"></div>
 </div>
 </body>
 </html>
