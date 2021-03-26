@@ -6,6 +6,7 @@
   <link type="text/css" rel="stylesheet" href="style.css"/>
   <script src="lessons.data.nts.js"></script>
   <script src="dom.nts.js"></script>
+  <script src="tts.service.nts.js"></script>
   <script>
     /**@param {{kanji,hiragana,nom,meaning}[]} oneLesson
      * @return {any[][]}*/
@@ -19,11 +20,12 @@
     function setTableRowOnclickCustom(tableElement) {
       getTableElementRows(tableElement).forEach((row,rowIndex)=>{
         row.onclick = ev => {
-          console.log('row clicked! rowIndex='+rowIndex);
+          console.log(`row clicked! rowIndex=${rowIndex}, row data=${row[STRCON.dataBinding]}`);
           getTableElementRows(tableElement).forEach(r => {
             r.style.backgroundColor = 'white';
           });
           row.style.backgroundColor = 'red';
+          textToSpeech(row[STRCON.dataBinding][0]);
         };
       });
     }
