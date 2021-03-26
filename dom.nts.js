@@ -174,8 +174,8 @@ const createTableElement = function(headerNameList, dataMatrix, option, callback
 const _createTableHeaderStr = function(headerNameList, option) {
   return `<thead>
     <tr class="${option&&option['tableHeaderClassName']||''}">
-      ${_ngFor(headerNameList,headerName=>
-      `<th class="${option&&option['tableHeaderCellClassName']||''}">${headerName}</th>`)}
+      ${_ngFor(headerNameList,(headerName,headerIndex)=>
+      `<th ${_ngClass(()=>option.tableHeaderCellClassName,()=>'nts-table-col-'+headerIndex)}>${headerName}</th>`)}
     </tr>
   </thead>`;
 };
@@ -187,7 +187,7 @@ const _createTableBodyStr = function(dataMatrix, option) {
     ${_ngFor(dataMatrix,(rowData,rowIndex)=>
     `<tr ${_ngClass(()=>option.tableBodyRowClassName)} ${_ngDataCustom('row-index',rowIndex)}>
       ${_ngFor(rowData,(cellData,cellIndex)=>
-      `<td ${_ngClass(()=>option.tableBodyCellClassName)} ${_ngDataCustom('col-index',cellIndex)}>
+      `<td ${_ngClass(()=>option.tableBodyCellClassName,()=>'nts-table-col-'+cellIndex)} ${_ngDataCustom('col-index',cellIndex)}>
         ${cellData}
       </td>`)}
     </tr>`)}

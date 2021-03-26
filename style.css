@@ -60,3 +60,7 @@ body {
   vertical-align: top;
   line-height: 10px;
 }
+
+.nts-table-col-1 {
+  display: none;
+}
