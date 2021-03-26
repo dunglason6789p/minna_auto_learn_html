@@ -22,9 +22,11 @@
         row.onclick = ev => {
           console.log(`row clicked! rowIndex=${rowIndex}, row data=${row[STRCON.dataBinding]}`);
           getTableElementRows(tableElement).forEach(r => {
-            r.style.backgroundColor = 'white';
+            //r.style.backgroundColor = '#2d2d2d';
+            r.cells[0].style.borderLeftColor = '#8c8c8c';
           });
-          row.style.backgroundColor = 'red';
+          //row.style.backgroundColor = '#2f2f2f';
+          row.cells[0].style.borderLeftColor = 'red';
           textToSpeech(row[STRCON.dataBinding][0]);
         };
       });
