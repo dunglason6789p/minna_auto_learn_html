@@ -16,6 +16,17 @@
       }
       return arrayOfArrays;
     }
+    function setTableRowOnclickCustom(tableElement) {
+      getTableElementRows(tableElement).forEach((row,rowIndex)=>{
+        row.onclick = ev => {
+          console.log('row clicked! rowIndex='+rowIndex);
+          getTableElementRows(tableElement).forEach(r => {
+            r.style.backgroundColor = 'white';
+          });
+          row.style.backgroundColor = 'red';
+        };
+      });
+    }
   </script>
   <script>
     window.onload = () => {
@@ -24,7 +35,7 @@
         newSelectedValue => {
           console.log("selected:"+newSelectedValue);
           const lessonMatrix = convertOneLessonToMatrix(LESSONS[newSelectedValue]);
-          updateTableElement(tableElement, lessonMatrix);
+          updateTableElement(tableElement, lessonMatrix, setTableRowOnclickCustom);
         });
       appendChildToById('#elmId_divSelectContainer', selectElement);
       //Table.
@@ -32,7 +43,7 @@
         tableClassName: 'tg',
         tableHeaderCellClassName: 'tg-0lax',
         tableBodyCellClassName: 'tg-0lax',
-      });
+      }, setTableRowOnclickCustom);
       appendChildToById('#elmId_divTableContainer', tableElement);
     };
   </script>

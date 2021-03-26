@@ -1,6 +1,10 @@
 const STRCON = {
   dataBinding:
   'dataBinding',
+  refTable:
+  'refTable',
+  refRow:
+  'refRow',
 }
 
 /**@param {string} id
@@ -123,26 +127,6 @@ function forOf(list, callback) {
   }
 }
 
-function _storeTableElementData(tableElement, dataMatrix) {
-  try {
-    tableElement[STRCON.dataBinding] = dataMatrix;
-    let rowIndex = -1;
-    for (const row of tableElement.rows) {
-      rowIndex++;
-      if (rowIndex > 0) { // Skip header row.
-        row[STRCON.dataBinding] = dataMatrix[rowIndex-1];
-        let columnIndex = -1;
-        for (const cell of row.cells) {
-          columnIndex++;
-          cell[STRCON.dataBinding] = dataMatrix[rowIndex-1][columnIndex];
-        }
-      }
-    }
-  } catch (e) {
-    console.warn(e);
-  }
-}
-
 /**@typedef TableElementOption
  * @type {object}
  * @property {string} [tableId]
@@ -156,8 +140,9 @@ function _storeTableElementData(tableElement, dataMatrix) {
 /**@param {string[]} headerNameList
  * @param {any[][]} dataMatrix
  * @param {TableElementOption} [option]
+ * @param {function(HTMLTableElement):any} [callback]
  * @return HTMLTableElement*/
-const createTableElement = function(headerNameList, dataMatrix, option) {
+const createTableElement = function(headerNameList, dataMatrix, option, callback) {
   const tableElement = document.createElement('table');
   tableElement.innerHTML = `
     ${_createTableHeaderStr(headerNameList, option)}
@@ -170,6 +155,9 @@ const createTableElement = function(headerNameList, dataMatrix, option) {
     tableElement.className = option.tableClassName;
   }
   _storeTableElementData(tableElement, dataMatrix);
+  if (callback) {
+    callback(tableElement);
+  }
   return tableElement;
 };
 /**@param {string[]} headerNameList
@@ -199,15 +187,57 @@ const _createTableBodyStr = function(dataMatrix, option) {
 };
 /**@param {HTMLTableElement} tableElement
  * @param {any[][]} dataMatrix
+ * @param {function(HTMLTableElement):any} [callback]
  * @return HTMLTableElement*/
-const updateTableElement = function(tableElement, dataMatrix) {
+const updateTableElement = function(tableElement, dataMatrix, callback) {
   const tbody = tableElement.querySelector('tbody');
   if (tbody) {
     tbody.outerHTML = _createTableBodyStr(dataMatrix);
   }
   _storeTableElementData(tableElement, dataMatrix);
+  if (callback) {
+    callback(tableElement);
+  }
   return tableElement;
 };
+
+/**Return table's rows (except header row).
+ * @param {HTMLTableElement} tableElement
+ * @return HTMLTableRowElement[]*/
+const getTableElementRows = function(tableElement) {
+  const array = [];
+  let rowIndex = -1;
+  for (const row of tableElement.rows) {
+    rowIndex++;
+    if (rowIndex > 0) { // Skip header row.
+      array.push(row);
+    }
+  }
+  return array;
+}
+
+function _storeTableElementData(tableElement, dataMatrix) {
+  try {
+    tableElement[STRCON.dataBinding] = dataMatrix;
+    getTableElementRows(tableElement).forEach((row, rowIndex)=>{
+      row[STRCON.dataBinding] = dataMatrix[rowIndex];
+      row[STRCON.refTable] = tableElement;
+      let columnIndex = 0;
+      for (const cell of row.cells) {
+        cell[STRCON.dataBinding] = dataMatrix[rowIndex][columnIndex++];
+        cell[STRCON.refRow] = row;
+      }
+    });
+  } catch (e) {
+    console.warn(e);
+  }
+}
+
+function setTableRowElementsOnClick(tableElement, onclick) {
+  getTableElementRows(tableElement).forEach((row,rowIndex)=>{
+    row.onclick = onclick;
+  });
+}
 
 // Export.
 module && (module.exports = {
