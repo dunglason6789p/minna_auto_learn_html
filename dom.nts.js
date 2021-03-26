@@ -78,31 +78,53 @@ function _ngFor(list, mapperFun) {
   return sb;
 }
 
+/**@param {function(void):string} classNameSuppliers*/
+function _ngClass(...classNameSuppliers) {
+  let sb = '';
+  for (const classNameSupplier of classNameSuppliers) {
+    let classNameResult = null;
+    try {
+      classNameResult = classNameSupplier();
+    } catch (e) {/*ignore*/}
+    if (classNameResult) {
+      if (sb) {sb += ' '}
+      sb += classNameResult;
+    }
+  }
+  return `class=${sb}`;
+}
+
+/**@typedef TableElementOption
+ * @type {object}
+ * @property {string} [tableId]
+ * @property {string} [tableClassName]
+ * @property {string} [tableHeaderClassName]
+ * @property {string} [tableHeaderCellClassName]
+ * @property {string} [tableBodyRowClassName]
+ * @property {string} [tableBodyCellClassName]
+ * */
+
 /**@param {string[]} headerNameList
  * @param {any[][]} dataMatrix
- * @param {string|null} [id]
- * @param {{
- *  tableClassName?:string,
- *  tableHeaderClassName?:string,
- *  tableHeaderCellClassName?:string,
- *  tableBodyRowClassName?:string,
- *  tableBodyCellClassName?:string,
- * }} [option]
+ * @param {TableElementOption} [option]
  * @return HTMLTableElement*/
-const createTableElement = function(headerNameList, dataMatrix, id, option) {
+const createTableElement = function(headerNameList, dataMatrix, option) {
   const tableElement = document.createElement('table');
   tableElement.innerHTML = `
     ${_createTableHeaderStr(headerNameList, option)}
     ${_createTableBodyStr(dataMatrix, option)}
   `;
-  if (id) {
-    tableElement.id = id;
+  if (option&&option.tableId) {
+    tableElement.id = option.tableId;
   }
   if (option&&option.tableClassName) {
     tableElement.className = option.tableClassName;
   }
   return tableElement;
 };
+/**@param {string[]} headerNameList
+ * @param {TableElementOption} option
+ * */
 const _createTableHeaderStr = function(headerNameList, option) {
   return `<thead>
     <tr class="${option&&option['tableHeaderClassName']||''}">
@@ -111,12 +133,15 @@ const _createTableHeaderStr = function(headerNameList, option) {
     </tr>
   </thead>`;
 };
+/**@param {any[][]} dataMatrix
+ * @param {TableElementOption} option
+ * */
 const _createTableBodyStr = function(dataMatrix, option) {
   return `<tbody>
     ${_ngFor(dataMatrix,rowData=>
-    `<tr class="${option&&option['tableBodyRowClassName']||''}">
+    `<tr ${_ngClass(()=>option.tableBodyRowClassName)}>
       ${_ngFor(rowData,cellData=>
-      `<td class="${option&&option['tableBodyCellClassName']||''}">
+      `<td ${_ngClass(()=>option.tableBodyCellClassName)}>
         ${cellData}
       </td>`)}
     </tr>`)}
