@@ -21,6 +21,11 @@ body {
     margin-left: 100px;
   }
 }
+@media only screen and (max-width: 600px) {
+  .nts-centralize-1 {
+    margin-left: 0;
+  }
+}
 
 .tg {
   border-collapse: collapse;
