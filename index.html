@@ -23,17 +23,17 @@
       const selectElement = createSelectElement(Object.keys(LESSONS), 'elmId_categorySelect',
         newSelectedValue => {
           console.log("selected:"+newSelectedValue);
-          const lessonMaxtrix = convertOneLessonToMatrix(LESSONS[newSelectedValue]);
-          updateTableElement(tableELement, lessonMaxtrix);
+          const lessonMatrix = convertOneLessonToMatrix(LESSONS[newSelectedValue]);
+          updateTableElement(tableElement, lessonMatrix);
         });
       appendChildToById('#elmId_divSelectContainer', selectElement);
       //Table.
-      const tableELement = createTableElement(['kanji','hiragana','nom','meaning'], [], null, {
+      const tableElement = createTableElement(['kanji','hiragana','nom','meaning'], [], null, {
         tableClassName: 'tg',
         tableHeaderCellClassName: 'tg-0lax',
         tableBodyCellClassName: 'tg-0lax',
       });
-      appendChildToById('#elmId_divTableContainer', tableELement);
+      appendChildToById('#elmId_divTableContainer', tableElement);
     };
   </script>
 </head>
