@@ -185,9 +185,9 @@ const _createTableHeaderStr = function(headerNameList, option) {
 const _createTableBodyStr = function(dataMatrix, option) {
   return `<tbody>
     ${_ngFor(dataMatrix,(rowData,rowIndex)=>
-    `<tr ${_ngClass(()=>option.tableBodyRowClassName)} ${_ngDataCustom('row-index',rowIndex)}">
-      ${_ngFor(rowData,cellData=>
-      `<td ${_ngClass(()=>option.tableBodyCellClassName)}>
+    `<tr ${_ngClass(()=>option.tableBodyRowClassName)} ${_ngDataCustom('row-index',rowIndex)}>
+      ${_ngFor(rowData,(cellData,cellIndex)=>
+      `<td ${_ngClass(()=>option.tableBodyCellClassName)} ${_ngDataCustom('col-index',cellIndex)}>
         ${cellData}
       </td>`)}
     </tr>`)}

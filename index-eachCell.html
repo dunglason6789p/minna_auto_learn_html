@@ -34,8 +34,18 @@
           });
           //row.style.backgroundColor = '#2f2f2f';
           row.cells[0].style.borderLeftColor = 'red';
-          textToSpeech(row[STRCON.dataBinding][0]);
+          //textToSpeech(row[STRCON.dataBinding][0]);//TODO.
         };
+        forOf(row.cells, (cell,cellIndex)=>{
+          cell.onclick = cellClickEvent => {
+            if (cellIndex === 0 || cellIndex === 1) {
+              textToSpeech(cell.innerText);
+            }
+            if (cellIndex === 2 || cellIndex === 3) {
+              textToSpeech(cell.innerText, 'vi_vn');
+            }
+          };
+        });
       });
     }
   </script>

@@ -1,5 +1,5 @@
 let URL_TTS_SERVER = 'http://localhost:8080'; // Allow editing url!
-function textToSpeech(textInput) {
+function textToSpeech(textInput, language) {
   if (!textInput) {
     alert('Empty input!')
   } else {
@@ -11,6 +11,7 @@ function textToSpeech(textInput) {
       },
       body: JSON.stringify({
         text: textInput,
+        language: language,
       }) // body data type must match "Content-Type" header
     }).then(async response => {
       console.log('response=<below>');
