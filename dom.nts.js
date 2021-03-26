@@ -1,3 +1,8 @@
+const STRCON = {
+  dataBinding:
+  'dataBinding',
+}
+
 /**@param {string} id
  * @return HTMLElement*/
 const getElementById = function(id) {
@@ -71,9 +76,9 @@ const updateSelectElement = function(selectElement, optionDataList) {
 function _ngFor(list, mapperFun) {
   let sb = '';
   if (list) {
-    for (const item of list) {
-      sb += mapperFun(item);
-    }
+    list.forEach((item,index)=>{
+      sb += mapperFun(item,index);
+    });
   }
   return sb;
 }
@@ -91,7 +96,51 @@ function _ngClass(...classNameSuppliers) {
       sb += classNameResult;
     }
   }
-  return `class=${sb}`;
+  return sb ? `class=${sb}` : '';
+}
+
+/*
+function _ngData(data) {
+  return `data-binding=${JSON.stringify(data)}`;
+  // return `data-binding=${data}`;
+}
+*/
+
+function _ngDataCustom(name, data) {
+  return `data-${name}=${JSON.stringify(data)}`;
+  // return `data-${name}=${data}`;
+}
+
+/**@template T
+ * @param {T[]|HTMLCollectionBase<T>} list
+ * @param {function(T,number):any} callback*/
+function forOf(list, callback) {
+  if (list) {
+    let count = 0;
+    for (const item of list) {
+      callback(item,count++);
+    }
+  }
+}
+
+function _storeTableElementData(tableElement, dataMatrix) {
+  try {
+    tableElement[STRCON.dataBinding] = dataMatrix;
+    let rowIndex = -1;
+    for (const row of tableElement.rows) {
+      rowIndex++;
+      if (rowIndex > 0) { // Skip header row.
+        row[STRCON.dataBinding] = dataMatrix[rowIndex-1];
+        let columnIndex = -1;
+        for (const cell of row.cells) {
+          columnIndex++;
+          cell[STRCON.dataBinding] = dataMatrix[rowIndex-1][columnIndex];
+        }
+      }
+    }
+  } catch (e) {
+    console.warn(e);
+  }
 }
 
 /**@typedef TableElementOption
@@ -120,10 +169,11 @@ const createTableElement = function(headerNameList, dataMatrix, option) {
   if (option&&option.tableClassName) {
     tableElement.className = option.tableClassName;
   }
+  _storeTableElementData(tableElement, dataMatrix);
   return tableElement;
 };
 /**@param {string[]} headerNameList
- * @param {TableElementOption} option
+ * @param {TableElementOption} [option]
  * */
 const _createTableHeaderStr = function(headerNameList, option) {
   return `<thead>
@@ -134,12 +184,12 @@ const _createTableHeaderStr = function(headerNameList, option) {
   </thead>`;
 };
 /**@param {any[][]} dataMatrix
- * @param {TableElementOption} option
+ * @param {TableElementOption} [option]
  * */
 const _createTableBodyStr = function(dataMatrix, option) {
   return `<tbody>
-    ${_ngFor(dataMatrix,rowData=>
-    `<tr ${_ngClass(()=>option.tableBodyRowClassName)}>
+    ${_ngFor(dataMatrix,(rowData,rowIndex)=>
+    `<tr ${_ngClass(()=>option.tableBodyRowClassName)} ${_ngDataCustom('row-index',rowIndex)}">
       ${_ngFor(rowData,cellData=>
       `<td ${_ngClass(()=>option.tableBodyCellClassName)}>
         ${cellData}
@@ -155,6 +205,7 @@ const updateTableElement = function(tableElement, dataMatrix) {
   if (tbody) {
     tbody.outerHTML = _createTableBodyStr(dataMatrix);
   }
+  _storeTableElementData(tableElement, dataMatrix);
   return tableElement;
 };
 
@@ -166,4 +217,5 @@ module && (module.exports = {
   createSelectElement,
   updateSelectElement,
   createTableElement,
+  updateTableElement,
 });
