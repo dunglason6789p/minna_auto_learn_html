@@ -34,10 +34,18 @@ const appendChildTo = function(parentElement, childElement) {
 };
 
 /**@param {string} id
- * @param {HTMLElement} childElement
+ * @param {HTMLElement} childElements
  * @return boolean*/
-const appendChildToById = function(id, childElement) {
-  return appendChildTo(getElementById(id), childElement);
+const appendChildToById = function(id, ...childElements) {
+  const parentElement = getElementById(id);
+  if (parentElement) {
+    for (const childElement of childElements) {
+      appendChildTo(parentElement, childElement);
+    }
+    return true;
+  } else {
+    return false;
+  }
 };
 
 /**
@@ -237,6 +245,32 @@ function setTableRowElementsOnClick(tableElement, onclick) {
   getTableElementRows(tableElement).forEach((row,rowIndex)=>{
     row.onclick = onclick;
   });
+}
+
+/**@param {string|null} id
+ * @param {function(boolean):any} onchange
+ * @return {HTMLInputElement}
+ * */
+function createCheckBoxElement(id, onchange) {
+  const checkBoxElement = document.createElement('input');
+  checkBoxElement.type = 'checkbox';
+  checkBoxElement.onchange = checkboxChangeEvent => {
+    onchange(checkBoxElement.checked);
+  };
+  if (id) {
+    checkBoxElement.id = id;
+    checkBoxElement.name = id;
+  }
+  return checkBoxElement;
+}
+
+function createLabelElement(forInputId, text) {
+  const labelElement = document.createElement('label');
+  labelElement.innerText = text;
+  if (forInputId) {
+    labelElement.id = forInputId;
+  }
+  return labelElement;
 }
 
 // Export.
