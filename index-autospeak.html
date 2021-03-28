@@ -30,6 +30,8 @@
     var INDEX_CURRENT_PLAY = -1;
     /**@type {boolean}*/
     var IS_REPLAY_CURRENT = false;
+    /**@type {boolean}*/
+    var IS_REPLAY_ALWAYS = false;
   </script>
   <script>
     /**@param {{kanji,hiragana,nom,meaning}[]} oneLesson
@@ -85,6 +87,17 @@
             row.cells.item(2).click();
           }
           await sleep(1000);
+          //Replay (if checked).
+          if (IS_REPLAY_ALWAYS && currentIndex === INDEX_CURRENT_PLAY) {
+            row.cells.item(0).click();
+            await sleep(1000);
+            if (IS_AUTO_SPEAK_MEANING) {
+              row.cells.item(3).click();
+            } else {
+              row.cells.item(2).click();
+            }
+            await sleep(1000);
+          }
         } else return; //NOT 'break' !.
         if (currentIndex === INDEX_CURRENT_PLAY && !IS_REPLAY_CURRENT) {
           INDEX_CURRENT_PLAY++;
@@ -97,15 +110,6 @@
   </script>
   <script>
     window.onload = () => {
-      //Checkbox IS_SPEAK_VN.
-      {/*block*/
-        const checkboxId = 'elmId_checkbox_IS_SPEAK_VN';
-        const checkboxElement = createCheckBoxElement(checkboxId, isChecked=>{
-          IS_SPEAK_VN = isChecked;
-        }, IS_SPEAK_VN);
-        const labelElement = createLabelElement(checkboxId, 'Also speak Vietnamese?');
-        appendChildToById('#elmId_divCheckBoxContainer', checkboxElement, labelElement);
-      }
       //Checkbox IS_SHOW_HIRA_COL.
       {/*block*/
         const checkboxId = 'elmId_checkbox_IS_SHOW_HIRA_COL';
@@ -135,6 +139,15 @@
           IS_AUTO_SPEAK_MEANING = isChecked;
         }, IS_AUTO_SPEAK);
         const labelElement = createLabelElement(checkboxId, 'Speak meaning?');
+        appendChildToById('#elmId_divCheckBoxContainer', checkboxElement, labelElement);
+      }
+      //Checkbox IS_REPLAY_ALWAYS.
+      {/*block*/
+        const checkboxId = 'elmId_checkbox_IS_REPLAY_ALWAYS';
+        const checkboxElement = createCheckBoxElement(checkboxId, isChecked=>{
+          IS_REPLAY_ALWAYS = isChecked;
+        }, IS_REPLAY_ALWAYS);
+        const labelElement = createLabelElement(checkboxId, 'Speak twice?');
         appendChildToById('#elmId_divCheckBoxContainer', checkboxElement, labelElement);
       }
       //Select.
