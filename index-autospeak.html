@@ -26,6 +26,8 @@
     var IS_AUTO_SPEAK = false;
     /**@type {boolean}*/
     var IS_AUTO_SPEAK_MEANING = false;
+    /**@type {number}*/
+    var INDEX_CURRENT_PLAY = -1;
   </script>
   <script>
     /**@param {{kanji,hiragana,nom,meaning}[]} oneLesson
@@ -65,8 +67,14 @@
       document.querySelectorAll('.nts-table-col-1').forEach(elm => elm.style.display = (isShow ? 'table-cell' : 'none'));
     }
     async function autoSpeak(rows) {
-      for (const row of rows) {
+      if (INDEX_CURRENT_PLAY < 0) {
+        INDEX_CURRENT_PLAY = 0;
+      }
+      while (INDEX_CURRENT_PLAY < rows.length) {
+        const currentIndex = INDEX_CURRENT_PLAY;
+        const row = rows[currentIndex];
         if (IS_AUTO_SPEAK) {
+          row.scrollIntoView();
           row.cells.item(0).click();
           await sleep(1000);
           if (IS_AUTO_SPEAK_MEANING) {
@@ -75,8 +83,12 @@
             row.cells.item(2).click();
           }
           await sleep(1000);
-        } else break;
+        } else return; //NOT 'break' !.
+        if (currentIndex === INDEX_CURRENT_PLAY) {
+          INDEX_CURRENT_PLAY++;
+        };
       }
+      INDEX_CURRENT_PLAY = -1;
     }
   </script>
   <script>
@@ -139,6 +151,26 @@
       WORD_TABLE = tableElement;
       //Init states after render.
       showOrHideHiraganaColumn(IS_SHOW_HIRA_COL);
+      //Key press handlers.
+      document.onkeyup = event => {
+        const keyCode = event.which;
+        if (keyCode === 37 || keyCode === 38) {
+          event.preventDefault();
+          INDEX_CURRENT_PLAY -= 1;
+        } else if (keyCode === 32) {
+          event.preventDefault();
+          if (IS_AUTO_SPEAK) {
+            IS_AUTO_SPEAK = false;
+            document.querySelector('#elmId_checkbox_IS_AUTO_SPEAK').checked = false;
+          } else {
+            IS_AUTO_SPEAK = true;
+            document.querySelector('#elmId_checkbox_IS_AUTO_SPEAK').checked = true;
+            autoSpeak(getTableElementRows(tableElement));
+          }
+        } else if (keyCode === 96) {
+          INDEX_CURRENT_PLAY = 0;
+        }
+      };
     };
   </script>
 </head>
