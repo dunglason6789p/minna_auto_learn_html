@@ -28,6 +28,8 @@
     var IS_AUTO_SPEAK_MEANING = false;
     /**@type {number}*/
     var INDEX_CURRENT_PLAY = -1;
+    /**@type {boolean}*/
+    var IS_REPLAY_CURRENT = false;
   </script>
   <script>
     /**@param {{kanji,hiragana,nom,meaning}[]} oneLesson
@@ -84,9 +86,11 @@
           }
           await sleep(1000);
         } else return; //NOT 'break' !.
-        if (currentIndex === INDEX_CURRENT_PLAY) {
+        if (currentIndex === INDEX_CURRENT_PLAY && !IS_REPLAY_CURRENT) {
           INDEX_CURRENT_PLAY++;
-        };
+        } else if (IS_REPLAY_CURRENT) {
+          IS_REPLAY_CURRENT = false;
+        }
       }
       INDEX_CURRENT_PLAY = -1;
     }
@@ -169,6 +173,8 @@
           }
         } else if (keyCode === 96) {
           INDEX_CURRENT_PLAY = 0;
+        } else if (keyCode === 110) {
+          IS_REPLAY_CURRENT = true;
         }
       };
     };
