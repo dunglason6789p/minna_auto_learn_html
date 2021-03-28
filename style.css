@@ -3,6 +3,16 @@ body {
   background-color: #2d2d2d;
 }
 
+#elmId_mainDiv {
+  height: 95vh;
+  overflow-y: hidden;
+}
+
+#elmId_divTableContainer {
+  height: 80vh;
+  overflow-y: auto
+}
+
 .nts-centralize-1 {
   margin-left: 600px;
 }
@@ -59,8 +69,4 @@ body {
   text-align: left;
   vertical-align: top;
   line-height: 10px;
-}
-
-.nts-table-col-1 {
-  display: none;
 }

@@ -12,6 +12,7 @@
   </style>
   <script src="lessons.data.nts.js"></script>
   <script src="dom.nts.js"></script>
+  <script src="util.nts.js"></script>
   <script src="tts.service.nts.js"></script>
   <script>
     //global.
@@ -21,6 +22,10 @@
     var IS_SPEAK_VN = false;
     /**@type {boolean}*/
     var IS_SHOW_HIRA_COL = false;
+    /**@type {boolean}*/
+    var IS_AUTO_SPEAK = false;
+    /**@type {boolean}*/
+    var IS_AUTO_SPEAK_MEANING = false;
   </script>
   <script>
     /**@param {{kanji,hiragana,nom,meaning}[]} oneLesson
@@ -59,6 +64,20 @@
     function showOrHideHiraganaColumn(isShow) {
       document.querySelectorAll('.nts-table-col-1').forEach(elm => elm.style.display = (isShow ? 'table-cell' : 'none'));
     }
+    async function autoSpeak(rows) {
+      for (const row of rows) {
+        if (IS_AUTO_SPEAK) {
+          row.cells.item(0).click();
+          await sleep(1000);
+          if (IS_AUTO_SPEAK_MEANING) {
+            row.cells.item(3).click();
+          } else {
+            row.cells.item(2).click();
+          }
+          await sleep(1000);
+        } else break;
+      }
+    }
   </script>
   <script>
     window.onload = () => {
@@ -79,6 +98,27 @@
           showOrHideHiraganaColumn(IS_SHOW_HIRA_COL);
         }, IS_SHOW_HIRA_COL);
         const labelElement = createLabelElement(checkboxId, 'Show Hiragana?');
+        appendChildToById('#elmId_divCheckBoxContainer', checkboxElement, labelElement);
+      }
+      //Checkbox IS_AUTO_SPEAK.
+      {/*block*/
+        const checkboxId = 'elmId_checkbox_IS_AUTO_SPEAK';
+        const checkboxElement = createCheckBoxElement(checkboxId, isChecked=>{
+          IS_AUTO_SPEAK = isChecked;
+          if (IS_AUTO_SPEAK) {
+            autoSpeak(getTableElementRows(tableElement));
+          }
+        }, IS_AUTO_SPEAK);
+        const labelElement = createLabelElement(checkboxId, 'Auto speak?');
+        appendChildToById('#elmId_divCheckBoxContainer', checkboxElement, labelElement);
+      }
+      //Checkbox IS_AUTO_SPEAK_MEANING.
+      {/*block*/
+        const checkboxId = 'elmId_checkbox_IS_AUTO_SPEAK_MEANING';
+        const checkboxElement = createCheckBoxElement(checkboxId, isChecked=>{
+          IS_AUTO_SPEAK_MEANING = isChecked;
+        }, IS_AUTO_SPEAK);
+        const labelElement = createLabelElement(checkboxId, 'Speak meaning?');
         appendChildToById('#elmId_divCheckBoxContainer', checkboxElement, labelElement);
       }
       //Select.

@@ -3,27 +3,11 @@ function textToSpeech(textInput, language) {
   if (!textInput) {
     alert('Empty input!')
   } else {
-    const urlTTS = URL_TTS_SERVER+'/tts'
-    fetch(urlTTS, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        text: textInput,
-        language: language,
-      }) // body data type must match "Content-Type" header
-    }).then(async response => {
-      console.log('response=<below>');
-      console.log(response);
-      const responseAsJson = await response.text();
-      console.log(`responseAsJson=${responseAsJson}`);
-      const audioUrl = URL_TTS_SERVER + responseAsJson.replace('audio/','/my-audio/');
-      playAudioFromUrl(audioUrl);
-    }).catch(error => {
-      console.error('error=<below>');
-      console.error(error);
-    });
+    if (!language) {
+      playAudioFromUrl(`audio/FEMALE/JA_JP/${textInput}.mp3`);
+    } else {
+      playAudioFromUrl(`audio/FEMALE/VI_VN/${textInput}.mp3`);
+    }
   }
 }
 function playAudioFromUrl(audioUrl) {

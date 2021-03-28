@@ -249,9 +249,10 @@ function setTableRowElementsOnClick(tableElement, onclick) {
 
 /**@param {string|null} id
  * @param {function(boolean):any} onchange
+ * @param {boolean|null|undefined} [initialValue]
  * @return {HTMLInputElement}
  * */
-function createCheckBoxElement(id, onchange) {
+function createCheckBoxElement(id, onchange, initialValue) {
   const checkBoxElement = document.createElement('input');
   checkBoxElement.type = 'checkbox';
   checkBoxElement.onchange = checkboxChangeEvent => {
@@ -260,6 +261,9 @@ function createCheckBoxElement(id, onchange) {
   if (id) {
     checkBoxElement.id = id;
     checkBoxElement.name = id;
+  }
+  if (initialValue != null) {
+    checkBoxElement.checked = initialValue;
   }
   return checkBoxElement;
 }
