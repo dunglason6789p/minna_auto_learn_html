@@ -45,7 +45,7 @@
     }
     function setTableRowOnclickCustom(tableElement) {
       getTableElementRows(tableElement).forEach((row,rowIndex)=>{
-        row.onclick = ev => {
+        row.onclick = clickEvent => {
           console.log(`row clicked! rowIndex=${rowIndex}, row data=${row[STRCON.dataBinding]}`);
           getTableElementRows(tableElement).forEach(r => {
             //r.style.backgroundColor = '#2d2d2d';
@@ -54,6 +54,9 @@
           //row.style.backgroundColor = '#2f2f2f';
           row.cells[0].style.borderLeftColor = 'red';
           //textToSpeech(row[STRCON.dataBinding][0]);//TODO.
+          if (clickEvent.isTrusted) {
+            INDEX_CURRENT_PLAY = rowIndex;
+          }
         };
         forOf(row.cells, (cell,cellIndex)=>{
           cell.onclick = cellClickEvent => {
