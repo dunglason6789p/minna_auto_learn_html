@@ -32,6 +32,8 @@
     var IS_PLAY_TWICE_CURRENT = false;
     /**@type {boolean}*/
     var IS_PLAY_TWICE_ALWAYS = false;
+    /**@type {boolean}*/
+    var IS_PLAY_INFINITY_ONE_LESSONS = false;
   </script>
   <script>
     /**@param {{kanji,hiragana,nom,meaning}[]} oneLesson
@@ -73,7 +75,8 @@
     function showOrHideHiraganaColumn(isShow) {
       document.querySelectorAll('.nts-table-col-1').forEach(elm => elm.style.display = (isShow ? 'table-cell' : 'none'));
     }
-    async function autoSpeak(rows) {
+    async function autoSpeak() {
+      const rows = getTableElementRows(WORD_TABLE);
       if (INDEX_CURRENT_PLAY < 0) {
         INDEX_CURRENT_PLAY = 0;
       }
@@ -109,6 +112,9 @@
         }
       }
       INDEX_CURRENT_PLAY = -1;
+      if (IS_PLAY_INFINITY_ONE_LESSONS) {
+        await autoSpeak(); // remember to add 'await'!
+      }
     }
   </script>
   <script>
@@ -129,7 +135,7 @@
         const checkboxElement = createCheckBoxElement(checkboxId, isChecked=>{
           IS_AUTO_SPEAK = isChecked;
           if (IS_AUTO_SPEAK) {
-            autoSpeak(getTableElementRows(tableElement));
+            autoSpeak();
           }
         }, IS_AUTO_SPEAK);
         const labelElement = createLabelElement(checkboxId, 'Auto speak?');
@@ -151,6 +157,15 @@
           IS_PLAY_TWICE_ALWAYS = isChecked;
         }, IS_PLAY_TWICE_ALWAYS);
         const labelElement = createLabelElement(checkboxId, 'Speak twice?');
+        appendChildToById('#elmId_divCheckBoxContainer', checkboxElement, labelElement);
+      }
+      //Checkbox IS_PLAY_INFINITY_ONE_LESSONS.
+      {/*block*/
+        const checkboxId = 'elmId_checkbox_IS_PLAY_INFINITY_ONE_LESSONS';
+        const checkboxElement = createCheckBoxElement(checkboxId, isChecked=>{
+          IS_PLAY_INFINITY_ONE_LESSONS = isChecked;
+        }, IS_PLAY_INFINITY_ONE_LESSONS);
+        const labelElement = createLabelElement(checkboxId, 'Infinity(one lesson)?');
         appendChildToById('#elmId_divCheckBoxContainer', checkboxElement, labelElement);
       }
       //Select.
@@ -185,7 +200,7 @@
           } else {
             IS_AUTO_SPEAK = true;
             document.querySelector('#elmId_checkbox_IS_AUTO_SPEAK').checked = true;
-            autoSpeak(getTableElementRows(tableElement));
+            autoSpeak();
           }
         } else if (keyCode === 96) {
           INDEX_CURRENT_PLAY = 0;
